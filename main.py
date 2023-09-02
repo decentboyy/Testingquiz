@@ -1,6 +1,6 @@
 import logging
 from telegram import Update
-from telegram.ext import Updater, CommandHandler, MessageHandler, ConversationHandler, CallbackContext
+from telegram.ext import Updater, CommandHandler, MessageHandler, ConversationHandler, CallbackContext, Filters
 
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
@@ -87,35 +87,39 @@ def quiz_bot(update: Update, context: CallbackContext):
 
         update.message.reply_text(leaderboard_text)
 
-# Create an Updater and pass in your bot's API token
-updater = Updater("5058249365:AAEQ7-6sDQh3HrpU23fEMvjARKa95RKVJfU")
+def main():
+    # Create an Updater and pass in your bot's API token
+    updater = Updater("5058249365:AAEQ7-6sDQh3HrpU23fEMvjARKa95RKVJfU", use_context=True)
 
-# Get the dispatcher to register handlers
-dp = updater.dispatcher
+    # Get the dispatcher to register handlers
+    dp = updater.dispatcher
 
-# Define a conversation handler for creating quizzes
-conv_handler = ConversationHandler(
-    entry_points=[CommandHandler('newquiz', new_quiz)],
-    states={
-        QUIZ_TITLE: MessageHandler(filters=Filters.text & ~Filters.command, callback=set_quiz_title),
-        QUIZ_QUESTION: [MessageHandler(Filters.text & ~Filters.command, set_quiz_question)],
-        QUIZ_OPTIONS: [MessageHandler(Filters.text & ~Filters.command, set_quiz_options)],
-        QUIZ_CORRECT_ANSWER: [MessageHandler(Filters.text & ~Filters.command, set_correct_answer)],
-    },
-    fallbacks=[],
-)
+    # Define a conversation handler for creating quizzes
+    conv_handler = ConversationHandler(
+        entry_points=[CommandHandler('newquiz', new_quiz)],
+        states={
+            QUIZ_TITLE: [MessageHandler(Filters.text & ~Filters.command, set_quiz_title)],
+            QUIZ_QUESTION: [MessageHandler(Filters.text & ~Filters.command, set_quiz_question)],
+            QUIZ_OPTIONS: [MessageHandler(Filters.text & ~Filters.command, set_quiz_options)],
+            QUIZ_CORRECT_ANSWER: [MessageHandler(Filters.text & ~Filters.command, set_correct_answer)],
+        },
+        fallbacks=[],
+    )
 
-# Register the conversation handler
-dp.add_handler(conv_handler)
+    # Register the conversation handler
+    dp.add_handler(conv_handler)
 
-# Register a message handler for all other messages
-dp.add_handler(MessageHandler(Filters.text & ~Filters.command, quiz_bot))
+    # Register a message handler for all other messages
+    dp.add_handler(MessageHandler(Filters.text & ~Filters.command, quiz_bot))
 
-# Register a command handler for the /start command
-dp.add_handler(CommandHandler("start", start))
+    # Register a command handler for the /start command
+    dp.add_handler(CommandHandler("start", start))
 
-# Start the Bot
-updater.start_polling()
+    # Start the Bot
+    updater.start_polling()
 
-# Run the bot until you send a signal to stop (e.g., Ctrl+C)
-updater.idle()
+    # Run the bot until you send a signal to stop (e.g., Ctrl+C)
+    updater.idle()
+
+if __name__ == "__main__":
+    main()
