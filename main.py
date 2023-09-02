@@ -1,6 +1,6 @@
 import logging
 from telegram import Update
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, ConversationHandler, CallbackContext
+from telegram.ext import Updater, CommandHandler, MessageHandler, ConversationHandler, CallbackContext
 
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
@@ -97,7 +97,7 @@ dp = updater.dispatcher
 conv_handler = ConversationHandler(
     entry_points=[CommandHandler('newquiz', new_quiz)],
     states={
-        QUIZ_TITLE: [MessageHandler(Filters.text & ~Filters.command, set_quiz_title)],
+        QUIZ_TITLE: MessageHandler(filters=Filters.text & ~Filters.command, callback=set_quiz_title),
         QUIZ_QUESTION: [MessageHandler(Filters.text & ~Filters.command, set_quiz_question)],
         QUIZ_OPTIONS: [MessageHandler(Filters.text & ~Filters.command, set_quiz_options)],
         QUIZ_CORRECT_ANSWER: [MessageHandler(Filters.text & ~Filters.command, set_correct_answer)],
