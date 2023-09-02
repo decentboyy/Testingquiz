@@ -89,7 +89,7 @@ def quiz_bot(update: Update, context: CallbackContext):
 
 def main():
     # Create an Updater and pass in your bot's API token
-    updater = Updater("5058249365:AAEQ7-6sDQh3HrpU23fEMvjARKa95RKVJfU", use_context=True)
+    updater = Updater("5058249365:AAEQ7-6sDQh3HrpU23fEMvjARKa95RKVJfU")
 
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
